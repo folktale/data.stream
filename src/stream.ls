@@ -79,7 +79,8 @@ export class Cons
       
 
   ### Show
-  to-string: -> "Stream(#{@head}, #{@rest!})"
+  to-string: -> "Stream(#{@_repr 10})"
+  _repr: (n) -> "#{@head}, #{if n > 0 => @rest!_repr (n - 1) else => '[...]'}"
 
 export Nil = new class extends Cons
   concat: (as) -> as
@@ -88,4 +89,4 @@ export Nil = new class extends Cons
   chain: (f) -> this
   first: -> throw new Error "Can't take the first element of an empty Stream."
   rest: -> throw new Error "Can't take the rest of an empty Stream."
-  to-string: -> "Stream.Nil"
+  _repr: -> "Stream.Nil"
