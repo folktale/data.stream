@@ -76,7 +76,14 @@ export class Cons
       if tail is Nil => break
       else           => xs := tail
     return acc
-      
+
+
+  ### Eq
+  # TODO: makes this cheap by hashing contents
+  # TODO: make it work for long streams (this will blow the stack)
+  is-equal: (b) ->
+    | b is Nil  => false
+    | otherwise => (@head is b.head) and (@rest!is-equal b.rest!)
 
   ### Show
   to-string: -> "Stream(#{@_repr 10})"
@@ -90,3 +97,4 @@ export Nil = new class extends Cons
   first: -> throw new Error "Can't take the first element of an empty Stream."
   rest: -> throw new Error "Can't take the rest of an empty Stream."
   _repr: -> "Stream.Nil"
+  is-equal: (b) -> b is Nil

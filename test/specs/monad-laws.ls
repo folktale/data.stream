@@ -28,15 +28,14 @@
 # to verify.
 spec = (require 'hifive')!
 laws = require 'laws'
-Stream = require '../../src/'
+{Cons} = require '../../src/'
 
 # And to use the laws, we need to provide a constructor function, that
 # given a single argument will return a new data structure containing
 # that argument. We also make sure that the constructor for our
 # semigroup implementation lifts the value into a non empty list, so we
 # can concatenate the values.
-make     = (a) -> new Stream a
-make-nel = (a) -> new Stream [a]
+make = (a) -> Cons.of a
 
 # Then we provide the specification for the test runner. As we're using
 # Hifive here, it expects that each definition for the specification to
@@ -46,7 +45,7 @@ make-nel = (a) -> new Stream [a]
 module.exports = spec 'Algebraic laws' (o, spec) ->
 
   spec ': Semigroup' (o) ->
-    o '1. Associativity' laws.semigroup.associativity(make-nel).as-test!
+    o '1. Associativity' laws.semigroup.associativity(make).as-test!
 
   spec ': Monoid' (o) ->
     o '1. Right identity' laws.monoid.right-identity(make).as-test!
