@@ -77,6 +77,9 @@ export class Cons
       else           => xs := tail
     return acc
 
+  # NB: f is lazy (takes a thunk) in its second argument
+  reduceRight: (acc, f) ->
+    f @head, ~> @rest!reduceRight(acc, f)
 
   ### Eq
   # TODO: makes this cheap by hashing contents
@@ -94,6 +97,7 @@ export Nil = new class extends Cons
   map: (f) -> this
   ap: (b) -> b
   chain: (f) -> this
+  reduceRight: (acc, f) -> acc
   first: -> throw new Error "Can't take the first element of an empty Stream."
   rest: -> throw new Error "Can't take the rest of an empty Stream."
   _repr: -> "Stream.Nil"
