@@ -119,5 +119,5 @@ Released under the [MIT licence](https://github.com/folktale/data.stream/blob/ma
 [es5-shim]: https://github.com/kriskowal/es5-shim
 [docs]: http://folktale.github.io/data.stream
 <!-- [release: https://github.com/folktale/data.stream/releases/download/v$VERSION/data.stream-$VERSION.tar.gz] -->
-[release]: https://github.com/folktale/data.stream/releases/download/v0.0.0/data.stream-0.0.0.tar.gz
+[release]: https://github.com/folktale/data.stream/releases/download/v0.0.1/data.stream-0.0.1.tar.gz
 <!-- [/release] -->
