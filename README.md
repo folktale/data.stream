@@ -13,7 +13,22 @@ Lazy generic streams
 ## Example
 
 ```js
-( ... )
+var Stream = require('data.stream')
+
+var naturals = Stream.iterate(function(n){ return n + 1 }, 0)
+var squared  = naturals.map(function(n){ return n * n })
+
+Stream.toArray(Stream.take(10)(squared))
+// => [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
+
+var fibs = new Cons(1, function(){
+  return new Cons(2, function() {
+    return Stream.zipWith(function(a, b){ return a + b })(fibs)(fibs.rest())
+  })
+})
+
+Stream.toArray(Stream.take(10)(fibs))
+// => [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 ]
 ```
 
 

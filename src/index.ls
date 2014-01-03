@@ -24,3 +24,7 @@
  */
 
 # Lazy generic streams
+module.exports = [
+  require './stream'
+  require './lazy'
+].reduce (<<<), {}
