@@ -28,7 +28,10 @@
 # to verify.
 spec = (require 'hifive')!
 laws = require 'laws'
-{Cons} = require '../../src/'
+{forAll, data} = require 'claire'
+assert = require 'assert'
+
+{Cons, Nil, to-array, from-array} = require '../../src/'
 
 # And to use the laws, we need to provide a constructor function, that
 # given a single argument will return a new data structure containing
@@ -67,3 +70,21 @@ module.exports = spec 'Algebraic laws' (o, spec) ->
   spec ': Monad' (o) ->
     o '1. Left identity'  laws.monad.left-identity(make).as-test!
     o '2. Right identity' laws.monad.right-identity(make).as-test!
+
+  spec ': to-array' (o) ->
+    o '1. Left inverse', (for-all(data.Array(data.Int)).satisfy (list) ->
+      casted = to-array(from-array(list))
+      assert.deepEqual(to-array(from-array(list)), list)
+      true
+    ).as-test!
+    o '2. Right inverse', (for-all(data.Array(data.Int)).satisfy (list) ->
+      seq = from-array(list)
+      seq.is-equal(from-array(to-array(seq)))
+    ).as-test!
+
+  spec ': reduce-right' (o) ->
+    o '1. Identity with Nil and Cons', (forAll(data.Array(data.Int)).satisfy (list) ->
+      seq = from-array(list)
+      reduced = seq.reduce-right Nil, (x, y) -> new Cons x, y
+      seq.is-equal(reduced)
+    ).as-test!
