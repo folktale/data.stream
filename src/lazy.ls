@@ -65,6 +65,15 @@ export to-array = (xs) ->
     xs := xs.rest!
   return result
 
+make-thunk = (x) -> (-> x)
+
+export from-array = (array) ->
+  make-fn = (x) -> (-> x)
+  seq = Nil
+  for e in array by -1
+    seq := new Cons e, make-thunk(seq)
+  seq
+
 export first = (xs) -> xs.first!
 
 export rest = (xs) -> xs.rest!
