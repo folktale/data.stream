@@ -31,7 +31,7 @@ laws = require 'laws'
 {forAll, data} = require 'claire'
 assert = require 'assert'
 
-{Cons, Nil, to-array, from-array} = require '../../src/'
+{Cons, Nil, to-array, from-array, iterate} = require '../../src/'
 
 # And to use the laws, we need to provide a constructor function, that
 # given a single argument will return a new data structure containing
@@ -88,3 +88,10 @@ module.exports = spec 'Algebraic laws' (o, spec) ->
       reduced = seq.reduce-right Nil, (x, y) -> new Cons x, y
       seq.is-equal(reduced)
     ).as-test!
+
+    o '2. Well-behaved with infinite streams', ->
+      seq = iterate (1+), 0
+      result = seq.reduce-right 0, (el, next) ->
+        if el > 4 then el else next() + el
+
+      assert.equal(result, 15)
