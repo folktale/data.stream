@@ -28,7 +28,7 @@
 # to verify.
 spec = (require 'hifive')!
 laws = require 'laws'
-{forAll, data} = require 'claire'
+{forAll, data:{ Array:ArrayG, Int }} = require 'claire'
 assert = require 'assert'
 
 {Cons, Nil, to-array, from-array, iterate} = require '../../src/'
@@ -72,22 +72,26 @@ module.exports = spec 'Algebraic laws' (o, spec) ->
     o '2. Right identity' laws.monad.right-identity(make).as-test!
 
   spec ': to-array' (o) ->
-    o '1. Left inverse', (for-all(data.Array(data.Int)).satisfy (list) ->
-      casted = to-array(from-array(list))
-      assert.deepEqual(to-array(from-array(list)), list)
-      true
-    ).as-test!
-    o '2. Right inverse', (for-all(data.Array(data.Int)).satisfy (list) ->
-      seq = from-array(list)
-      seq.is-equal(from-array(to-array(seq)))
-    ).as-test!
+    o '1. Left inverse' do
+      for-all(ArrayG(Int)).satisfy (list) ->
+        casted = to-array(from-array(list))
+        assert.deepEqual(to-array(from-array(list)), list)
+        true
+      .as-test!
+
+    o '2. Right inverse' do
+      for-all(ArrayG(Int)).satisfy (list) ->
+        seq = from-array(list)
+        seq.is-equal(from-array(to-array(seq)))
+      .as-test!
 
   spec ': reduce-right' (o) ->
-    o '1. Identity with Nil and Cons', (forAll(data.Array(data.Int)).satisfy (list) ->
-      seq = from-array(list)
-      reduced = seq.reduce-right Nil, (x, y) -> new Cons x, y
-      seq.is-equal(reduced)
-    ).as-test!
+    o '1. Identity with Nil and Cons' do
+      forAll(ArrayG(Int)).satisfy (list) ->
+        seq = from-array(list)
+        reduced = seq.reduce-right Nil, (x, y) -> new Cons x, y
+        seq.is-equal(reduced)
+      .as-test!
 
     o '2. Well-behaved with infinite streams', ->
       seq = iterate (1+), 0
