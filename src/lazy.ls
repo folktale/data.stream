@@ -65,13 +65,13 @@ export to-array = (xs) ->
     xs := xs.rest!
   return result
 
-make-thunk = (x) -> (-> x)
-
 export from-array = (array) ->
   seq = Nil
   for e in array by -1
     seq := new Cons e, make-thunk(seq)
-  seq
+  return seq
+
+  function make-thunk(x) => -> x
 
 export first = (xs) -> xs.first!
 
