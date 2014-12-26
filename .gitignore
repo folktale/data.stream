@@ -1,6 +1,6 @@
 *.orig
-node_modules
-lib
-dist
+node_modules/
+dist/
+lib/
 npm-debug.log
-docs/literate
+docs/

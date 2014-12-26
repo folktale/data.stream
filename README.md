@@ -1,10 +1,11 @@
 data.stream
 ===========
 
-[![Build Status](https://secure.travis-ci.org/folktale/data.stream.png?branch=master)](https://travis-ci.org/folktale/data.stream)
-[![NPM version](https://badge.fury.io/js/data.stream.png)](http://badge.fury.io/js/data.stream)
-[![Dependencies Status](https://david-dm.org/folktale/data.stream.png)](https://david-dm.org/folktale/data.stream)
-[![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://github.com/hughsk/stability-badges)
+[![Build status](https://img.shields.io/travis/Folktale/data.stream/master.svg?style=flat)](https://travis-ci.org/Folktale/data.stream)
+[![NPM version](https://img.shields.io/npm/v/data.stream.svg?style=flat)](https://npmjs.org/package/data.stream)
+[![Dependencies status](https://img.shields.io/david/Folktale/data.stream.svg?style=flat)](https://david-dm.org/Folktale/data.stream)
+![Licence](https://img.shields.io/npm/l/data.stream.svg?style=flat&label=licence)
+![Experimental](https://img.shields.io/badge/stability-experimental-orange.svg?style=flat)
 
 
 Lazy generic streams
@@ -13,22 +14,7 @@ Lazy generic streams
 ## Example
 
 ```js
-var Stream = require('data.stream')
-
-var naturals = Stream.iterate(function(n){ return n + 1 }, 0)
-var squared  = naturals.map(function(n){ return n * n })
-
-Stream.toArray(Stream.take(10)(squared))
-// => [0, 1, 4, 9, 16, 25, 36, 49, 64, 81]
-
-var fibs = new Cons(1, function(){
-  return new Cons(2, function() {
-    return Stream.zipWith(function(a, b){ return a + b })(fibs)(fibs.rest())
-  })
-})
-
-Stream.toArray(Stream.take(10)(fibs))
-// => [ 1, 1, 2, 3, 5, 8, 13, 21, 34, 55 ]
+( ... )
 ```
 
 
@@ -65,7 +51,7 @@ require(['data.stream'], function(Stream) {
 ### Using without modules
 
 [Download the latest release][release], and load the `data.stream.umd.js`
-file. The properties are exposed in the global `folktale.data.Stream` object:
+file. The properties are exposed in the global `Folktale.Data.Stream` object:
 
 ```html
 <script src="/path/to/data.stream.umd.js"></script>
@@ -77,7 +63,7 @@ file. The properties are exposed in the global `folktale.data.Stream` object:
 If you want to compile this library from the source, you'll need [Git][],
 [Make][], [Node.js][], and run the following commands:
 
-    $ git clone git://github.com/folktale/data.stream.git
+    $ git clone git://github.com/Folktale/data.stream.git
     $ cd data.stream
     $ npm install
     $ make bundle
@@ -90,12 +76,12 @@ any JavaScript environment.
 
 You can [read the documentation online][docs] or build it yourself:
 
-    $ git clone git://github.com/folktale/data.stream.git
+    $ git clone git://github.com/Folktale/data.stream.git
     $ cd data.stream
     $ npm install
     $ make documentation
 
-Then open the file `docs/literate/index.html` in your browser.
+Then open the file `docs/index.html` in your browser.
 
 
 ## Platform support
@@ -106,9 +92,9 @@ platforms by the use of shims. Just include [es5-shim][] :)
 
 ## Licence
 
-Copyright (c) 2013 Quildreen Motta.
+Copyright (c) 2014 Quildreen Motta.
 
-Released under the [MIT licence](https://github.com/folktale/data.stream/blob/master/LICENCE).
+Released under the [MIT licence](https://github.com/Folktale/data.stream/blob/master/LICENCE).
 
 <!-- links -->
 [Fantasy Land]: https://github.com/fantasyland/fantasy-land
@@ -117,7 +103,7 @@ Released under the [MIT licence](https://github.com/folktale/data.stream/blob/ma
 [Make]: http://www.gnu.org/software/make/
 [Node.js]: http://nodejs.org/
 [es5-shim]: https://github.com/kriskowal/es5-shim
-[docs]: http://folktale.github.io/data.stream
-<!-- [release: https://github.com/folktale/data.stream/releases/download/v$VERSION/data.stream-$VERSION.tar.gz] -->
-[release]: https://github.com/folktale/data.stream/releases/download/v0.0.1/data.stream-0.0.1.tar.gz
+[docs]: http://Folktale.github.io/data.stream
+<!-- [release: https://github.com/Folktale/data.stream/releases/download/v$VERSION/data.stream-$VERSION.tar.gz] -->
+[release]: https://github.com/Folktale/data.stream/releases/download/v0.0.0/data.stream-0.0.0.tar.gz
 <!-- [/release] -->

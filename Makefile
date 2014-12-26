@@ -1,52 +1,86 @@
 bin        = $(shell npm bin)
-lsc        = $(bin)/lsc
+sjs        = $(bin)/sjs
 browserify = $(bin)/browserify
-groc       = $(bin)/groc
+jsdoc      = $(bin)/jsdoc
 uglify     = $(bin)/uglifyjs
 VERSION    = $(shell node -e 'console.log(require("./package.json").version)')
 
+# -- Configuration -----------------------------------------------------
+PACKAGE  = data.stream
+EXPORTS  = Folktale.Data.Stream
 
-lib: src/*.ls
-	$(lsc) -o lib -c src/*.ls
+LIB_DIR  = lib
+SRC_DIR  = src
+SRC      = $(wildcard $(SRC_DIR)/*.sjs)
+TGT      = ${SRC:$(SRC_DIR)/%.sjs=$(LIB_DIR)/%.js}
 
+TEST_DIR = test/specs-src
+TEST_BLD = test/specs
+TEST_SRC = $(wildcard $(TEST_DIR)/*.sjs)
+TEST_TGT = ${TEST_SRC:$(TEST_DIR)/%.sjs=$(TEST_BLD)/%.js}
+
+
+# -- Compilation -------------------------------------------------------
 dist:
-	mkdir -p dist
+	mkdir -p $@
 
-dist/data.stream.umd.js: compile dist
-	$(browserify) lib/index.js --standalone folktale.data.Stream > $@
+dist/$(PACKAGE).umd.js: $(LIB_DIR)/index.js dist
+	$(browserify) $< --standalone $(EXPORTS) > $@
 
-dist/data.stream.umd.min.js: dist/data.stream.umd.js
-	$(uglify) --mangle - < $^ > $@
+dist/$(PACKAGE).umd.min.js: dist/$(PACKAGE).umd.js
+	$(uglify) --mangle - < $< > $@
 
-# ----------------------------------------------------------------------
-bundle: dist/data.stream.umd.js
+$(LIB_DIR)/%.js: $(SRC_DIR)/%.sjs
+	mkdir -p $(dir $@)
+	$(sjs) --readable-names \
+	       --module lambda-chop/macros \
+	       --module es6-macros/macros/destructure \
+	       --module macros.operators/macros \
+	       --module adt-simple/macros \
+	       --sourcemap \
+	       --output $@ \
+	       $<
 
-minify: dist/data.stream.umd.min.js
+$(TEST_BLD)/%.js: $(TEST_DIR)/%.sjs
+	mkdir -p $(dir $@)
+	$(sjs) --readable-names        \
+	       --module hifive/macros  \
+	       --module alright/macros \
+	       --output $@             \
+	       $<
 
-compile: lib
+
+# -- Tasks -------------------------------------------------------------
+all: $(TGT)
+
+bundle: dist/$(PACKAGE).umd.js
+
+minify: dist/$(PACKAGE).umd.min.js
 
 documentation:
-	$(groc) --index "README.md"                                              \
-	        --out "docs/literate"                                            \
-	        src/*.ls test/*.ls test/specs/**.ls README.md
+	$(jsdoc) --configure jsdoc.conf.json
+	ABSPATH=$(shell cd "$(dirname "$0")"; pwd) $(MAKE) clean-docs
+
+clean-docs:
+	perl -pi -e "s?$$ABSPATH/??g" ./docs/*.html
 
 clean:
-	rm -rf dist build lib
+	rm -rf dist build $(LIB_DIR)
 
-test:
-	$(lsc) test/tap.ls
+test: all $(TEST_TGT)
+	node test/tap
 
-package: compile documentation bundle minify
-	mkdir -p dist/data.stream-$(VERSION)
-	cp -r docs/literate dist/data.stream-$(VERSION)/docs
-	cp -r lib dist/data.stream-$(VERSION)
-	cp dist/*.js dist/data.stream-$(VERSION)
-	cp package.json dist/data.stream-$(VERSION)
-	cp README.md dist/data.stream-$(VERSION)
-	cp LICENCE dist/data.stream-$(VERSION)
-	cd dist && tar -czf data.stream-$(VERSION).tar.gz data.stream-$(VERSION)
+package: documentation bundle minify
+	mkdir -p dist/$(PACKAGE)-$(VERSION)
+	cp -r docs dist/$(PACKAGE)-$(VERSION)
+	cp -r lib dist/$(PACKAGE)-$(VERSION)
+	cp dist/*.js dist/$(PACKAGE)-$(VERSION)
+	cp package.json dist/$(PACKAGE)-$(VERSION)
+	cp README.md dist/$(PACKAGE)-$(VERSION)
+	cp LICENCE dist/$(PACKAGE)-$(VERSION)
+	cd dist && tar -czf $(PACKAGE)-$(VERSION).tar.gz $(PACKAGE)-$(VERSION)
 
-publish: clean
+publish: clean test
 	npm install
 	npm publish
 
@@ -59,5 +93,4 @@ bump-feature:
 bump-major:
 	VERSION_BUMP=MAJOR $(MAKE) bump
 
-
-.PHONY: test
+.PHONY: test bump bump-feature bump-major publish package clean documentation
